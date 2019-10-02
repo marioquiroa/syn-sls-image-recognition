@@ -1,0 +1,1 @@
+# Synapbox Automatic Area of Interest - Auto AOI

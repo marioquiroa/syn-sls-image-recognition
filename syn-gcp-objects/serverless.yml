@@ -1,0 +1,45 @@
+frameworkVersion: ">=1.32.0"
+
+service: ImageRecognitionObjects
+
+package:
+  individually: true
+  exclude:
+    - ./**
+  include:
+    - handler.py
+    - objects.py
+    - downloader.py
+    - logger.py
+    - syn-g-cloud-ac072cf6a455.json
+
+custom: ${file(../common.yml)}
+
+provider:
+  name: aws
+  stage: ${opt:stage, 'development'}
+  region: ${opt:region, 'us-west-2'}
+  deploymentBucket:
+    name: ${self:custom.sourceCodeBucket.${self:provider.stage}}
+    serverSideEncryption: AES256
+  deploymentPrefix: syn-ai
+  stackTags:
+    project: syn-ai
+    version: v2
+    environment: ${self:provider.stage}
+
+functions:
+  ImageRecognitionObjects:
+    runtime: python3.6
+    memorySize: 1024
+    handler: handler.main
+    description: Extract objects from the video
+    name: syn-ai-image-recognition-objects-${self:provider.stage}
+    timeout: 900
+    role: ImageRecognitionRole
+
+resources:
+  - ${file(resources.yml)}
+
+plugins:
+  - serverless-python-requirements

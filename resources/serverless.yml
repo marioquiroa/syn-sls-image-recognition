@@ -1,0 +1,28 @@
+frameworkVersion: ">=1.32.0"
+
+service: ExtractFaceDataResources
+
+custom: ${file(../common.yml)}
+
+provider:
+  name: aws
+  stage: ${opt:stage, 'development'}
+  region: ${opt:region, 'us-west-2'}
+  deploymentBucket:
+    name: ${self:custom.sourceCodeBucket.${self:provider.stage}}
+    serverSideEncryption: AES256
+  stackTags:
+    project: syn
+    version: v2
+    environment: ${self:provider.stage}
+
+# layers:
+#   SynLoggingV2:
+#     name: SynLogging-${self:provider.stage}
+#     path: synlogging
+#     description: Config for better python logging for Synapbox Lambda functions
+#     compatibleRuntimes:
+#       - python3.6
+
+resources:
+  - ${file(resources.yml)}

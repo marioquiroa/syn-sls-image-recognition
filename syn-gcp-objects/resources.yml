@@ -1,0 +1,84 @@
+Resources:
+  ImageRecognitionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      RoleName: syn-image-recognition-${self:provider.stage}
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: syn-image-recognition-cloudwatch-${self:provider.stage}
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                Resource:
+                  - "Fn::Join":
+                      - ":"
+                      - - "arn:aws:logs"
+                        - Ref: "AWS::Region"
+                        - Ref: "AWS::AccountId"
+                        - "log-group:/aws/lambda/syn-image-recognition-${self:provider.stage}:*"
+              - Effect: Allow
+                Action:
+                  - logs:PutLogEvents
+                Resource:
+                  - "Fn::Join":
+                      - ":"
+                      - - "arn:aws:logs"
+                        - Ref: "AWS::Region"
+                        - Ref: "AWS::AccountId"
+                        - "log-group:/aws/lambda/syn-image-recognition-${self:provider.stage}:*:*"
+        - PolicyName: syn-image-recognition-s3-input-${self:provider.stage}
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                Resource:
+                  - "Fn::Join":
+                      - ":"
+                      - - "arn:aws:s3::"
+                        - "syn-ai-aaoi/*"
+        - PolicyName: syn-image-recognition-s3-output-${self:provider.stage}
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:ListAllMyBuckets
+                Resource:
+                  - "Fn::Join":
+                      - ":"
+                      - - "arn:aws:s3::"
+                        - "*"
+              - Effect: Allow
+                Action:
+                  - s3:ListBucket
+                  - s3:GetBucketLocation
+                Resource:
+                  - "Fn::Join":
+                      - ":"
+                      - - "arn:aws:s3::"
+                        - "syn-ai-aaoi"
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:PutObjectAcl
+                  - s3:GetObject
+                  - s3:GetObjectAcl
+                  - s3:DeleteObject
+                Resource:
+                  - "Fn::Join":
+                      - ":"
+                      - - "arn:aws:s3::"
+                        - "syn-ai-aaoi/*"

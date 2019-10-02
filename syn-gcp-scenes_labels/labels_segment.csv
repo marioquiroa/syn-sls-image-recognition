@@ -1,0 +1,4 @@
+vehicle,0.882,0.0,19978.291
+motor vehicle,0.8245,0.0,19978.291,vehicle
+car,0.5669,0.0,19978.291,vehicle
+land vehicle,0.6213,0.0,19978.291,vehicle

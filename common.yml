@@ -1,0 +1,16 @@
+accountId:
+  development: "497976830529"
+  staging: "497976830529"
+  production: "103964464252"
+recordingInputKeyPrefix: valid/
+sourceCodeBucket:
+  development: syn-lambda-source-code
+  staging: syn-lambda-source-code
+  production: syn-lambda-source-code-production
+pythonRequirements:
+  dockerizePip: true
+  dockerImage: python:3.6
+  noDeploy: []
+faceRekognitionErrorsSqsName: syn-facerekognition-errors-${self:provider.stage}
+dynamodbFaceDataPerTesterTableName: syn-testers-face-data-${self:provider.stage}
+dynamodbEmotionsPerTaskTableName: syn-emotions-per-task-${self:provider.stage}

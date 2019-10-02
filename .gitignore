@@ -1,0 +1,43 @@
+# Distribution / packaging
+*/.Python
+*/env/
+*/build/
+*/develop-eggs/
+*/dist/
+*/downloads/
+*/eggs/
+*/.eggs/
+*/lib/
+*/lib64/
+*/parts/
+*/sdist/
+*/var/
+*/*.egg-info/
+*/.installed.cfg
+*/*.egg
+*/__pycache__
+
+# package directories
+*/node_modules
+*/jspm_packages
+node_modules
+jspm_packages
+
+# Serverless directories
+*/.serverless
+.serverless
+
+# OSX Related
+.DS_Store
+
+# Logs
+logs/*
+
+#VS CODE
+.vscode/
+
+class_log
+
+*/libraries/__pycache__/*
+
+syn-g-cloud-ac072cf6a455.json

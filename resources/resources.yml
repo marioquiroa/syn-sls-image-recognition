@@ -1,0 +1,9 @@
+Resources:
+  S3BucketInput:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: syn-recording-input-${self:provider.stage}
+  S3BucketProcessingOutput:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: syn-processing-output-${self:provider.stage}
