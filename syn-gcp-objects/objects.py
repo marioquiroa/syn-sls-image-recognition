@@ -36,7 +36,9 @@ class objects:
 				objects_sub_dict = {}
 				for obj_f in obj.frames:
 					box = obj_f.normalized_bounding_box
+					
 					ms_current = str(round((obj_f.time_offset.seconds+obj_f.time_offset.nanos/1e9)*1000,4))
+					
 					objects_sub_dict["left"] = round(box.left,4)
 					objects_sub_dict["top"] = round(box.top,4)
 					objects_sub_dict["right"] = round(box.right,4)
@@ -44,24 +46,34 @@ class objects:
 					objects_sub_dict["start"] = prev_ms
 					objects_sub_dict["end"] = ms_current
 					objects_sub_dict["confidence"] = round(obj.confidence,4)
+					
 					list_sub.append(objects_sub_dict)
 					objects_sub_dict = {}
+
 					prev_ms = ms_current
-				[exist, list_objs] = self.already_in_list(list_objs,obj.entity.description,list_sub)
-				if not exist:
-					list_objs = self.new_in_list(list_objs,obj.entity.description,list_sub)
+				exist = self.check_existence(list_objs,obj.entity.description)
+				if exist:
+					list_objs = self.already_on_list(list_objs,obj.entity.description,list_sub)
+				else:
+					list_objs = self.new_on_list(list_objs,obj.entity.description,list_sub)
 		self.write_json(list_objs)
 
-	def already_in_list(self,list_objs,name,list_sub):
+	def check_existence(self,list_objs,name,list_sub):
 		exist = False
 		for element in list_objs: 
 			if(element['object']==name):
-				element['appearances'] += list_sub
 				exist = True
 				break;	
-		return [exist, list_objs]
+		return exist
 
-	def new_in_list(self,list_objs,name,list_sub):
+	def already_on_list(self,list_objs,name,list_sub):
+		for element in list_objs: 
+			if(element['object']==name):
+				element['appearances'] += list_sub
+				break;
+		return list_objs
+
+	def new_on_list(self,list_objs,name,list_sub):
 		objects_dict = {}
 		objects_dict["object"] = name
 		objects_dict["appearances"] = list_sub
