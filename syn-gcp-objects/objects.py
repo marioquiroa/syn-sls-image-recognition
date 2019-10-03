@@ -31,14 +31,12 @@ class objects:
 		object_list = []
 		for i, obj in enumerate(result.annotation_results[0].object_annotations):
 			if(len(obj.entity.description)>0):
-				start_time = obj.segment.start_time_offset
-				previous_milliseconds = str(round((start_time.seconds + start_time.nanos/1e9)*1000,4))
+				previous_milliseconds = get_milliseconds(obj.segment.start_time_offset)
 				
 				appearance_list = []
 				for current_frame in obj.frames:
-					end_time = current_frame.time_offset
-					current_millisecons = str(round((end_time.seconds+end_time.nanos/1e9)*1000,4))
-					self.fill_appearance(current_frame.normalized_bounding_box,previous_milliseconds,current_milliseconds,obj.confidence)
+					current_millisecons = get_milliseconds(current_frame.time_offset)
+					appearance_dict = self.fill_appearance(current_frame.normalized_bounding_box,previous_milliseconds,current_milliseconds,obj.confidence)
 					appearance_list.append(appearance_dict)
 					previous_milliseconds = current_millisecons
 
@@ -83,6 +81,10 @@ class objects:
 		appearance_dict["end"] = current_milliseconds
 		appearance_dict["confidence"] = round(obj.confidence,4)
 		return appearance_dict		
+
+	def get_milliseconds(self,time):
+		milliseconds = str(round((time.seconds + time.nanos/1e9)*1000,4))
+    	return milliseconds
 
 	def write_json(self,object_list):
 		bucket = 'syn-ai-aaoi'
