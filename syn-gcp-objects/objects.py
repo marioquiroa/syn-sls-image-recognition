@@ -56,9 +56,9 @@ class objects:
 
 	def milliseconds(self,time):
 		milliseconds = str(round((time.seconds + time.nanos/1e9)*1000,4))
-    	return milliseconds
+		return milliseconds
 
-    def one_appearance(self,box,previous_milliseconds,current_milliseconds,confidence):
+	def one_appearance(self,box,previous_milliseconds,current_milliseconds,confidence):
 		appearance_dict = {}
 		appearance_dict["left"] = round(box.left,4)
 		appearance_dict["top"] = round(box.top,4)
