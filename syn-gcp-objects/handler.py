@@ -1,6 +1,6 @@
-from logger import logger
-from downloader import downloader
-from objects import objects 
+from libraries.logger import logger
+from libraries.downloader import downloader
+from libraries.objects import objects 
 
 def main(event, context):
 	log = logger(context.aws_request_id)

@@ -8,9 +8,9 @@ package:
     - ./**
   include:
     - handler.py
-    - objects.py
-    - downloader.py
-    - logger.py
+    - libraries/objects.py
+    - libraries/downloader.py
+    - libraries/logger.py
     - syn-g-cloud-ac072cf6a455.json
 
 custom: ${file(../common.yml)}
