@@ -1,15 +1,12 @@
-from libraries.gcp_service import gcp_service 
 
 class objects:
 	
 	logger = -1
 	object_list = []
 
-	def __init__(self,logger,event):
+	def __init__(self,logger,result):
 		self.logger = logger.global_log
-		service = gcp_service(event)
-		self.logger.info('GCP call')
-		self.process_objects(service.get_response())
+		self.process_objects(result)
 		
 	def process_objects(self,result):
 		self.logger.info('Formatting objects')
