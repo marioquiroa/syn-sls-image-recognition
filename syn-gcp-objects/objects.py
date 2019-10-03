@@ -31,23 +31,25 @@ class objects:
 		object_list = []
 		for i, obj in enumerate(result.annotation_results[0].object_annotations):
 			if(len(obj.entity.description)>0):
-				appearance_list = self.get_all_appearances(obj.segment.start_time_offset,obj.frames,obj.confidence)
-
-				object_name = obj.entity.description
-				exist = self.check_existence(object_list,object_name)
-				if exist:
-					object_list = self.already_on_list(object_list,object_name,appearance_list)
-				else:
-					object_list = self.new_on_list(object_list,object_name,appearance_list)
-		
+				appearance_list = self.all_appearances(obj.segment.start_time_offset,obj.frames,obj.confidence)
+				object_list = self.all_objects(obj.entity.description,appearance_list,object_list)
 		self.write_json(object_list)
 
-	def get_all_appearances(self,initial_time,all_frames,confidence):
+	def all_objects(self,object_name,appearance_list,object_list):
+		object_name = obj.entity.description
+		exist = self.check_existence(object_list,object_name)
+		if exist:
+			object_list = self.already_on_list(object_list,object_name,appearance_list)
+		else:
+			object_list = self.new_on_list(object_list,object_name,appearance_list)
+		return object_list
+
+	def all_appearances(self,initial_time,all_frames,confidence):
 		appearance_list = []
-		previous_milliseconds = get_milliseconds(obj.segment.start_time_offset)
+		previous_milliseconds = self.milliseconds(obj.segment.start_time_offset)
 		for current_frame in obj.frames:
-			current_millisecons = get_milliseconds(current_frame.time_offset)
-			appearance_dict = self.fill_one_appearance(current_frame.normalized_bounding_box,previous_milliseconds,current_milliseconds,obj.confidence)
+			current_millisecons = self.milliseconds(current_frame.time_offset)
+			appearance_dict = self.one_appearance(current_frame.normalized_bounding_box,previous_milliseconds,current_milliseconds,obj.confidence)
 			appearance_list.append(appearance_dict)
 			previous_milliseconds = current_millisecons
 		return appearance_list
@@ -74,7 +76,7 @@ class objects:
 		object_list.append(object_dict)
 		return object_list
 
-	def fill_one_appearance(self,box,previous_milliseconds,current_milliseconds,confidence):
+	def one_appearance(self,box,previous_milliseconds,current_milliseconds,confidence):
 		appearance_dict = {}
 		appearance_dict["left"] = round(box.left,4)
 		appearance_dict["top"] = round(box.top,4)
@@ -85,7 +87,7 @@ class objects:
 		appearance_dict["confidence"] = round(obj.confidence,4)
 		return appearance_dict		
 
-	def get_milliseconds(self,time):
+	def milliseconds(self,time):
 		milliseconds = str(round((time.seconds + time.nanos/1e9)*1000,4))
     	return milliseconds
 
