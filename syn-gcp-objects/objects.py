@@ -46,12 +46,13 @@ class objects:
 
 	def all_appearances(self,initial_time,all_frames,confidence):
 		appearance_list = []
-		previous_milliseconds = self.milliseconds(obj.segment.start_time_offset)
-		for current_frame in obj.frames:
-			current_millisecons = self.milliseconds(current_frame.time_offset)
-			appearance_dict = self.one_appearance(current_frame.normalized_bounding_box,previous_milliseconds,current_milliseconds,obj.confidence)
+		previous_milliseconds = self.milliseconds(initial_time)
+		for current_frame in all_frames:
+			current_milliseconds = self.milliseconds(current_frame.time_offset)
+			appearance_dict = self.one_appearance(current_frame.normalized_bounding_box,
+				previous_milliseconds,current_milliseconds,confidence)
 			appearance_list.append(appearance_dict)
-			previous_milliseconds = current_millisecons
+			previous_milliseconds = current_milliseconds
 		return appearance_list
 
 	def milliseconds(self,time):
@@ -66,11 +67,10 @@ class objects:
 		appearance_dict["bottom"] = round(box.bottom,4)
 		appearance_dict["start"] = previous_milliseconds
 		appearance_dict["end"] = current_milliseconds
-		appearance_dict["confidence"] = round(obj.confidence,4)
+		appearance_dict["confidence"] = round(confidence,4)
 		return appearance_dict		
 
 	def all_objects(self,object_name,appearance_list,object_list):
-		object_name = obj.entity.description
 		exist = self.check_existence(object_list,object_name)
 		if exist:
 			object_list = self.already_on_list(object_list,object_name,appearance_list)
@@ -78,7 +78,7 @@ class objects:
 			object_list = self.new_on_list(object_list,object_name,appearance_list)
 		return object_list
 
-	def check_existence(self,object_list,name,appearance_list):
+	def check_existence(self,object_list,name):
 		exist = False
 		for element in object_list: 
 			if(element['object']==name):
