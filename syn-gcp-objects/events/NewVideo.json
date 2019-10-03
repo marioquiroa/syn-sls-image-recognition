@@ -1,6 +1,6 @@
 {
 	"bucket-input" : "syn-ai-aaoi"
-	"video-content" : "videos/renault_formula_uno.mp4"
-	"bucket-output" : "syn-ai-aaoi"
-	"file-objects" : "objects_renault_formula_uno.json"
+	,"video-content" : "videos/renault_formula_uno.mp4"
+	,"bucket-output" : "syn-ai-aaoi"
+	,"file-objects" : "objects/objects_renault_formula_uno.json"
 }
