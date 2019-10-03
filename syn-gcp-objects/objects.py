@@ -31,14 +31,7 @@ class objects:
 		object_list = []
 		for i, obj in enumerate(result.annotation_results[0].object_annotations):
 			if(len(obj.entity.description)>0):
-				previous_milliseconds = get_milliseconds(obj.segment.start_time_offset)
-				
-				appearance_list = []
-				for current_frame in obj.frames:
-					current_millisecons = get_milliseconds(current_frame.time_offset)
-					appearance_dict = self.fill_appearance(current_frame.normalized_bounding_box,previous_milliseconds,current_milliseconds,obj.confidence)
-					appearance_list.append(appearance_dict)
-					previous_milliseconds = current_millisecons
+				appearance_list = self.get_all_appearances(obj.segment.start_time_offset,obj.frames,obj.confidence)
 
 				object_name = obj.entity.description
 				exist = self.check_existence(object_list,object_name)
@@ -48,6 +41,16 @@ class objects:
 					object_list = self.new_on_list(object_list,object_name,appearance_list)
 		
 		self.write_json(object_list)
+
+	def get_all_appearances(self,initial_time,all_frames,confidence):
+		appearance_list = []
+		previous_milliseconds = get_milliseconds(obj.segment.start_time_offset)
+		for current_frame in obj.frames:
+			current_millisecons = get_milliseconds(current_frame.time_offset)
+			appearance_dict = self.fill_one_appearance(current_frame.normalized_bounding_box,previous_milliseconds,current_milliseconds,obj.confidence)
+			appearance_list.append(appearance_dict)
+			previous_milliseconds = current_millisecons
+		return appearance_list
 
 	def check_existence(self,object_list,name,appearance_list):
 		exist = False
@@ -71,7 +74,7 @@ class objects:
 		object_list.append(object_dict)
 		return object_list
 
-	def fill_appearance(self,box,previous_milliseconds,current_milliseconds,confidence):
+	def fill_one_appearance(self,box,previous_milliseconds,current_milliseconds,confidence):
 		appearance_dict = {}
 		appearance_dict["left"] = round(box.left,4)
 		appearance_dict["top"] = round(box.top,4)
