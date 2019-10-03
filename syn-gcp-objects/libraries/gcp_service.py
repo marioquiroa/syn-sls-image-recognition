@@ -16,7 +16,8 @@ class gcp_service:
 	def build_path(self,event):
 		folder_temporary = '/tmp'
 		video_content = event['video-content']
-		tmp_video = '{}/{}'.format(folder_temporary, video_content)
+		video_arr = video_content.split('/')
+		tmp_video = '{}/{}'.format(folder_temporary, video_arr[-1])
 		return tmp_video
 
 	def send_video(self,credentials,tmp_video):
