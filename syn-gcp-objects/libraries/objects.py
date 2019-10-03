@@ -1,8 +1,6 @@
-import os
-import io
-from google.cloud import videointelligence
 import json
 import boto3
+from libraries.gcp_service import gcp_service 
 
 class objects:
 	
@@ -10,30 +8,9 @@ class objects:
 
 	def __init__(self,logger,event):
 		self.logger = logger.global_log
-		credentials = "syn-g-cloud-ac072cf6a455.json"
-		result = self.send_video(credentials,self.build_path(event))
-		self.process_objects(result)
-
-	def build_path(self,event):
-		folder_temporary = '/tmp'
-		video_content = event['video-content']
-		tmp_video = '{}/{}'.format(folder_temporary, video_content)
-		return tmp_video
-
-	def send_video(self,credentials,tmp_video):
-		os.environ["GOOGLE_APPLICATION_CREDENTIALS"]=credentials
-		video_client = videointelligence.VideoIntelligenceServiceClient()
-		operation = video_client.annotate_video(
-			input_content=self.read_video(tmp_video), 
-			features=[videointelligence.enums.Feature.OBJECT_TRACKING], 
-			location_id='us-east1')
-		result = operation.result(timeout=900)
-		return result
-
-	def read_video(self,tmp_video):
-		with io.open(tmp_video, 'rb') as file:
-			input_content = file.read()	
-		return input_content
+		service = gcp_service(event)
+		self.logger.info('END GCP CALL')
+		self.process_objects(service.get_response())
 		
 	def process_objects(self,result):
 		self.logger.info('OBJECTS')
