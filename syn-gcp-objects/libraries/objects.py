@@ -1,25 +1,22 @@
-import json
-import boto3
 from libraries.gcp_service import gcp_service 
 
 class objects:
 	
 	logger = -1
+	object_list = []
 
 	def __init__(self,logger,event):
 		self.logger = logger.global_log
 		service = gcp_service(event)
-		self.logger.info('END GCP CALL')
+		self.logger.info('GCP call')
 		self.process_objects(service.get_response())
 		
 	def process_objects(self,result):
-		self.logger.info('OBJECTS')
-		object_list = []
+		self.logger.info('Formatting objects')
 		for i, obj in enumerate(result.annotation_results[0].object_annotations):
 			if(len(obj.entity.description)>0):
 				appearance_list = self.all_appearances(obj.segment.start_time_offset,obj.frames,obj.confidence)
-				object_list = self.all_objects(obj.entity.description,appearance_list,object_list)
-		self.write_json(object_list)
+				self.all_objects(obj.entity.description,appearance_list)
 
 	def all_appearances(self,initial_time,all_frames,confidence):
 		appearance_list = []
@@ -47,38 +44,32 @@ class objects:
 		appearance_dict["confidence"] = round(confidence,4)
 		return appearance_dict		
 
-	def all_objects(self,object_name,appearance_list,object_list):
-		exist = self.check_existence(object_list,object_name)
+	def all_objects(self,object_name,appearance_list):
+		exist = self.check_existence(object_name)
 		if exist:
-			object_list = self.already_on_list(object_list,object_name,appearance_list)
+			self.already_on_list(object_name,appearance_list)
 		else:
-			object_list = self.new_on_list(object_list,object_name,appearance_list)
-		return object_list
+			self.new_on_list(object_name,appearance_list)
 
-	def check_existence(self,object_list,name):
+	def check_existence(self,name):
 		exist = False
-		for element in object_list: 
+		for element in self.object_list: 
 			if(element['object']==name):
 				exist = True
 				break;	
 		return exist
 
-	def already_on_list(self,object_list,name,appearance_list):
-		for element in object_list: 
+	def already_on_list(self,name,appearance_list):
+		for element in self.object_list: 
 			if(element['object']==name):
 				element['appearances'] += appearance_list
 				break;
-		return object_list
 
-	def new_on_list(self,object_list,name,appearance_list):
+	def new_on_list(self,name,appearance_list):
 		object_dict = {}
 		object_dict["object"] = name
 		object_dict["appearances"] = appearance_list
-		object_list.append(object_dict)
-		return object_list
+		self.object_list.append(object_dict)
 
-	def write_json(self,object_list):
-		bucket = 'syn-ai-aaoi'
-		s3 = boto3.resource("s3").Bucket(bucket)
-		json.dump_s3 = lambda obj, f: s3.Object(key='file.json').put(Body=json.dumps(obj))
-		json.dump_s3(object_list,'file.json')
+	def get_json(self):
+		return self.object_list

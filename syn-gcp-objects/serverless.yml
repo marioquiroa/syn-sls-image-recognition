@@ -12,6 +12,7 @@ package:
     - libraries/downloader.py
     - libraries/logger.py
     - libraries/gcp_service.py
+    - libraries/save_file.py
     - syn-g-cloud-ac072cf6a455.json
 
 custom: ${file(../common.yml)}
