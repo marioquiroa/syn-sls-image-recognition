@@ -4,19 +4,18 @@ from botocore.exceptions import ClientError
 class downloader:
 	
 	logger = -1
-	bucket = "syn-ai-aaoi"
-	tmp_video = ''
 	s3_video = ''
+	tmp_video = ''
 	aws_request_id = ''
+	bucket = ''
 
 	def __init__(self, logger, event, context):
-		folder_temporary = '/tmp'
-		folder_input = "videos"
-		#var
 		self.logger = logger.global_log
-		video_content = event['video-content']
-		self.tmp_video = '{}/{}'.format(folder_temporary, video_content)
-		self.s3_video  = '{}/{}'.format(folder_input, video_content)
+		self.s3_video = event['video-content']
+		self.bucket = event['bucket-input']
+		path_arr = self.s3_video.split('/')
+		folder_temporary = '/tmp'
+		self.tmp_video = '{}/{}'.format(folder_temporary, path_arr[-1])
 		self.aws_request_id = context.aws_request_id
 		self.download_file()
 
@@ -37,7 +36,9 @@ class downloader:
 				self.bucket,self.s3_video)
 		else:
 			msg = "[{}] {}: {}".format(
-				self.aws_request_id,"Boto3 exception not handled",e.response['Error']['Code'])
+				self.aws_request_id,
+				"Boto3 exception not handled",
+				e.response['Error']['Code'])
 		
 		if(len(msg)>0):
 			self.logger.error(msg)
