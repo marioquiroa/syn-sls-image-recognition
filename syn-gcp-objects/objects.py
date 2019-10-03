@@ -31,26 +31,30 @@ class objects:
 		object_list = []
 		for i, obj in enumerate(result.annotation_results[0].object_annotations):
 			if(len(obj.entity.description)>0):
-				prev_ms = str(round((obj.segment.start_time_offset.seconds + obj.segment.start_time_offset.nanos/1e9)*1000,4))
+				start_time = obj.segment.start_time_offset
+				previous_milliseconds = str(round((start_time.seconds + start_time.nanos/1e9)*1000,4))
+				
 				appearance_list = []
 				appearance_dict = {}
-				for obj_f in obj.frames:
-					box = obj_f.normalized_bounding_box
+				
+				for current_frame in obj.frames:
 					
-					ms_current = str(round((obj_f.time_offset.seconds+obj_f.time_offset.nanos/1e9)*1000,4))
+					end_time = current_frame.time_offset
+					current_millisecons = str(round((end_time.seconds+current_frame.time_offset.nanos/1e9)*1000,4))
 					
+					box = current_frame.normalized_bounding_box
 					appearance_dict["left"] = round(box.left,4)
 					appearance_dict["top"] = round(box.top,4)
 					appearance_dict["right"] = round(box.right,4)
 					appearance_dict["bottom"] = round(box.bottom,4)
-					appearance_dict["start"] = prev_ms
-					appearance_dict["end"] = ms_current
+					appearance_dict["start"] = previous_milliseconds
+					appearance_dict["end"] = current_millisecons
 					appearance_dict["confidence"] = round(obj.confidence,4)
 					
 					appearance_list.append(appearance_dict)
 					appearance_dict = {}
 
-					prev_ms = ms_current
+					previous_milliseconds = current_millisecons
 
 					object_name = obj.entity.description
 
