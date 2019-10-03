@@ -9,7 +9,7 @@ def main(event, context):
 	downloader(log, event, context)
 	s = gcp_service(log,event)
 	o = objects(log, s.get_response())
-	save_file(log, o.get_json())
+	save_file(log, o.get_json(),event)
 
 if __name__ == "__main__":
 	main('', '')
